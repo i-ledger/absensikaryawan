@@ -164,6 +164,7 @@
         .then(response => response.json())
         .then(data => {
           const selectNama = document.getElementById("nama");
+          selectNama.innerHTML = '<option value="">Pilih Nama</option>';
           data.forEach(nama => {
             const option = document.createElement("option");
             option.value = nama;
