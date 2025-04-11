@@ -15,11 +15,27 @@
       text-align: center;
       color: #1976d2;
     }
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .top-bar button {
+      padding: 8px 16px;
+      background-color: #1976d2;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .top-bar button:hover {
+      background-color: #0d47a1;
+    }
     table {
       width: 100%;
       border-collapse: collapse;
       background: #fff;
-      margin-top: 20px;
     }
     th, td {
       padding: 10px;
@@ -58,7 +74,10 @@
   </style>
 </head>
 <body>
-  <h1>Manajemen Data Karyawan</h1>
+  <div class="top-bar">
+    <h1>Manajemen Data Karyawan</h1>
+    <button onclick="window.location.href='index.html'">← Kembali ke Halaman Absensi</button>
+  </div>
 
   <div>
     <input type="text" id="namaBaru" placeholder="Masukkan nama karyawan baru">
