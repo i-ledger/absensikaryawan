@@ -33,7 +33,7 @@
     }
     button {
       padding: 6px 12px;
-      margin-right: 4px;
+      margin: 4px 2px;
       background-color: #1976d2;
       color: white;
       border: none;
@@ -59,29 +59,24 @@
     .input-nama {
       width: auto;
     }
-    .flex-row {
+    .flex {
       display: flex;
-      gap: 10px;
       flex-wrap: wrap;
-      align-items: center;
-    }
-    .flex-row > * {
-      flex: 1;
+      gap: 10px;
     }
   </style>
 </head>
 <body>
   <h1>Manajemen Data Karyawan</h1>
 
-  <div class="flex-row">
+  <div class="flex">
     <input type="text" id="namaBaru" placeholder="Masukkan nama karyawan baru" />
     <button onclick="tambahKaryawan()">Tambah</button>
-    <button onclick="downloadExcel()">Download Excel</button>
-    <input type="file" id="uploadExcel" accept=".xlsx" />
-  </div>
 
-  <div>
     <input type="text" id="cariNama" placeholder="Cari nama karyawan..." oninput="filterKaryawan()" />
+
+    <button onclick="downloadExcel()">Download Excel</button>
+    <input type="file" id="uploadExcel" accept=".xlsx" onchange="uploadExcel()" />
   </div>
 
   <table>
@@ -110,12 +105,13 @@
     function tampilkanData(data) {
       const tbody = document.getElementById('tabel-karyawan');
       tbody.innerHTML = '';
-
       data.forEach((item, index) => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td>${index + 1}</td>
-          <td><input type="text" id="input-${index}" value="${item}" class="input-nama" disabled /></td>
+          <td>
+            <input type="text" id="input-${index}" value="${item}" class="input-nama" disabled />
+          </td>
           <td>
             <button onclick="enableEdit(${index})">Edit</button>
             <button onclick="simpanEdit(${index})">Simpan</button>
@@ -142,7 +138,6 @@
       const namaBaru = input.value.trim();
       if (!namaBaru) return alert("Nama tidak boleh kosong");
       input.disabled = true;
-
       await fetch(scriptURL, {
         method: 'POST',
         body: JSON.stringify({
@@ -157,7 +152,6 @@
     async function tambahKaryawan() {
       const nama = document.getElementById('namaBaru').value.trim();
       if (!nama) return alert('Nama tidak boleh kosong');
-
       await fetch(scriptURL, {
         method: 'POST',
         body: JSON.stringify({
@@ -165,7 +159,6 @@
           nama: nama
         })
       });
-
       document.getElementById('namaBaru').value = '';
       loadKaryawan();
     }
@@ -182,17 +175,15 @@
       loadKaryawan();
     }
 
-    // ===== DOWNLOAD EXCEL =====
     function downloadExcel() {
+      const ws = XLSX.utils.aoa_to_sheet([["Nama Karyawan"], ...dataKaryawan.map(nama => [nama])]);
       const wb = XLSX.utils.book_new();
-      const ws = XLSX.utils.aoa_to_sheet([['Nama'], ...dataKaryawan.map(nama => [nama])]);
-      XLSX.utils.book_append_sheet(wb, ws, 'Karyawan');
-      XLSX.writeFile(wb, 'data_karyawan.xlsx');
+      XLSX.utils.book_append_sheet(wb, ws, "Karyawan");
+      XLSX.writeFile(wb, "data_karyawan.xlsx");
     }
 
-    // ===== UPLOAD EXCEL =====
-    document.getElementById('uploadExcel').addEventListener('change', async function(e) {
-      const file = e.target.files[0];
+    function uploadExcel() {
+      const file = document.getElementById('uploadExcel').files[0];
       if (!file) return;
 
       const reader = new FileReader();
@@ -200,26 +191,22 @@
         const data = new Uint8Array(e.target.result);
         const workbook = XLSX.read(data, { type: 'array' });
         const sheet = workbook.Sheets[workbook.SheetNames[0]];
-        const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 }).slice(1); // Hapus header
+        const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
-        for (const row of rows) {
-          const nama = row[0];
-          if (nama) {
-            await fetch(scriptURL, {
-              method: 'POST',
-              body: JSON.stringify({
-                aksi: 'tambah-karyawan',
-                nama: nama
-              })
-            });
-          }
+        const namaList = rows.slice(1).map(row => row[0]).filter(Boolean); // Skip header
+        for (const nama of namaList) {
+          await fetch(scriptURL, {
+            method: 'POST',
+            body: JSON.stringify({
+              aksi: 'tambah-karyawan',
+              nama: nama
+            })
+          });
         }
-
-        alert('Upload selesai!');
         loadKaryawan();
       };
       reader.readAsArrayBuffer(file);
-    });
+    }
 
     window.onload = loadKaryawan;
   </script>
