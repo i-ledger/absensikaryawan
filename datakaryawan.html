@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Manajemen Data Karyawan</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -48,7 +49,7 @@
     .danger:hover {
       background-color: #b71c1c;
     }
-    input[type="text"] {
+    input[type="text"], input[type="file"] {
       padding: 6px;
       width: 100%;
       margin-top: 10px;
@@ -58,14 +59,25 @@
     .input-nama {
       width: auto;
     }
+    .flex-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .flex-row > * {
+      flex: 1;
+    }
   </style>
 </head>
 <body>
   <h1>Manajemen Data Karyawan</h1>
 
-  <div>
+  <div class="flex-row">
     <input type="text" id="namaBaru" placeholder="Masukkan nama karyawan baru" />
     <button onclick="tambahKaryawan()">Tambah</button>
+    <button onclick="downloadExcel()">Download Excel</button>
+    <input type="file" id="uploadExcel" accept=".xlsx" />
   </div>
 
   <div>
@@ -103,9 +115,7 @@
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td>${index + 1}</td>
-          <td>
-            <input type="text" id="input-${index}" value="${item}" class="input-nama" disabled />
-          </td>
+          <td><input type="text" id="input-${index}" value="${item}" class="input-nama" disabled /></td>
           <td>
             <button onclick="enableEdit(${index})">Edit</button>
             <button onclick="simpanEdit(${index})">Simpan</button>
@@ -171,6 +181,45 @@
       });
       loadKaryawan();
     }
+
+    // ===== DOWNLOAD EXCEL =====
+    function downloadExcel() {
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.aoa_to_sheet([['Nama'], ...dataKaryawan.map(nama => [nama])]);
+      XLSX.utils.book_append_sheet(wb, ws, 'Karyawan');
+      XLSX.writeFile(wb, 'data_karyawan.xlsx');
+    }
+
+    // ===== UPLOAD EXCEL =====
+    document.getElementById('uploadExcel').addEventListener('change', async function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = async function(e) {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+        const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 }).slice(1); // Hapus header
+
+        for (const row of rows) {
+          const nama = row[0];
+          if (nama) {
+            await fetch(scriptURL, {
+              method: 'POST',
+              body: JSON.stringify({
+                aksi: 'tambah-karyawan',
+                nama: nama
+              })
+            });
+          }
+        }
+
+        alert('Upload selesai!');
+        loadKaryawan();
+      };
+      reader.readAsArrayBuffer(file);
+    });
 
     window.onload = loadKaryawan;
   </script>
