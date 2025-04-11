@@ -26,10 +26,17 @@
     .header {
       display: flex;
       align-items: center;
-      justify-content: center;
+      justify-content: space-between;
       padding: 20px;
       background: white;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
       gap: 16px;
     }
 
@@ -41,6 +48,21 @@
       color: var(--primary);
       margin: 0;
       font-size: 1.5em;
+    }
+
+    .header button {
+      padding: 10px 15px;
+      background-color: green;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .header button:hover {
+      background-color: darkgreen;
     }
 
     .filters {
@@ -145,6 +167,11 @@
         max-width: 50px;
         max-height: 50px;
       }
+
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
     }
 
     @media (max-width: 480px) {
@@ -156,8 +183,11 @@
 </head>
 <body>
   <div class="header">
-    <img src="pertamina-logo.jpg" alt="Logo Pertamina">
-    <h2>Data Absensi Karyawan SES_GS</h2>
+    <div class="header-left">
+      <img src="pertamina-logo.jpg" alt="Logo Pertamina">
+      <h2>Data Absensi Karyawan SES_GS</h2>
+    </div>
+    <button onclick="location.href='datakaryawan.html'">Kelola Data Karyawan</button>
   </div>
 
   <div class="filters">
@@ -169,6 +199,7 @@
       <option value="masuk">Absen Masuk</option>
       <option value="pulang">Absen Pulang</option>
     </select>
+    <button onclick="renderTable()">Terapkan Filter</button>
     <button onclick="exportExcel()">Export Excel</button>
     <button onclick="exportPDF()">Export PDF</button>
   </div>
