@@ -55,6 +55,9 @@
       margin-bottom: 10px;
       box-sizing: border-box;
     }
+    .input-nama {
+      width: auto;
+    }
   </style>
 </head>
 <body>
@@ -63,6 +66,10 @@
   <div>
     <input type="text" id="namaBaru" placeholder="Masukkan nama karyawan baru" />
     <button onclick="tambahKaryawan()">Tambah</button>
+  </div>
+
+  <div>
+    <input type="text" id="cariNama" placeholder="Cari nama karyawan..." oninput="filterKaryawan()" />
   </div>
 
   <table>
@@ -80,10 +87,15 @@
 
   <script>
     const scriptURL = 'https://script.google.com/macros/s/AKfycbwS0vkygWEEK8mQOQ2w_Xglr3Pj1NH-wkpUcfkhaldusZc1mjvWDFpWEyZl2AXdgant/exec';
+    let dataKaryawan = [];
 
     async function loadKaryawan() {
       const res = await fetch(scriptURL + '?sheet=Datakaryawan');
-      const data = await res.json();
+      dataKaryawan = await res.json();
+      tampilkanData(dataKaryawan);
+    }
+
+    function tampilkanData(data) {
       const tbody = document.getElementById('tabel-karyawan');
       tbody.innerHTML = '';
 
@@ -91,13 +103,45 @@
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td>${index + 1}</td>
-          <td><input type="text" value="${item}" onchange="editKaryawan(${index}, this.value)" /></td>
           <td>
+            <input type="text" id="input-${index}" value="${item}" class="input-nama" disabled />
+          </td>
+          <td>
+            <button onclick="enableEdit(${index})">Edit</button>
+            <button onclick="simpanEdit(${index})">Simpan</button>
             <button class="danger" onclick="hapusKaryawan(${index})">Hapus</button>
           </td>
         `;
         tbody.appendChild(tr);
       });
+    }
+
+    function filterKaryawan() {
+      const keyword = document.getElementById('cariNama').value.toLowerCase();
+      const filtered = dataKaryawan.filter(nama => nama.toLowerCase().includes(keyword));
+      tampilkanData(filtered);
+    }
+
+    function enableEdit(index) {
+      document.getElementById(`input-${index}`).disabled = false;
+      document.getElementById(`input-${index}`).focus();
+    }
+
+    async function simpanEdit(index) {
+      const input = document.getElementById(`input-${index}`);
+      const namaBaru = input.value.trim();
+      if (!namaBaru) return alert("Nama tidak boleh kosong");
+      input.disabled = true;
+
+      await fetch(scriptURL, {
+        method: 'POST',
+        body: JSON.stringify({
+          aksi: 'edit-karyawan',
+          index: index,
+          nama: namaBaru
+        })
+      });
+      loadKaryawan();
     }
 
     async function tambahKaryawan() {
@@ -113,18 +157,6 @@
       });
 
       document.getElementById('namaBaru').value = '';
-      loadKaryawan();
-    }
-
-    async function editKaryawan(index, namaBaru) {
-      await fetch(scriptURL, {
-        method: 'POST',
-        body: JSON.stringify({
-          aksi: 'edit-karyawan',
-          index: index,
-          nama: namaBaru
-        })
-      });
       loadKaryawan();
     }
 
