@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Manajemen Data Karyawan</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #1976d2;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      margin-top: 20px;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+    th {
+      background: #1976d2;
+      color: white;
+    }
+    button {
+      padding: 6px 12px;
+      margin-right: 4px;
+      background-color: #1976d2;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0d47a1;
+    }
+    .danger {
+      background-color: #e53935;
+    }
+    .danger:hover {
+      background-color: #b71c1c;
+    }
+    input[type="text"] {
+      padding: 6px;
+      width: 100%;
+      margin-top: 10px;
+      margin-bottom: 10px;
+      box-sizing: border-box;
+    }
+  </style>
+</head>
+<body>
+  <h1>Manajemen Data Karyawan</h1>
+
+  <div>
+    <input type="text" id="namaBaru" placeholder="Masukkan nama karyawan baru">
+    <button onclick="tambahKaryawan()">Tambah</button>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>No</th>
+        <th>Nama</th>
+        <th>Aksi</th>
+      </tr>
+    </thead>
+    <tbody id="tabel-karyawan">
+      <!-- Data karyawan akan ditampilkan di sini -->
+    </tbody>
+  </table>
+
+  <script>
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbxeiUmIsd4jZjz6902K3FHccltBGoHIs_gVNQkvS_qrimlULPZfoWI1KFg4zgqdV8bS/exec';
+
+    async function loadKaryawan() {
+      const res = await fetch(scriptURL + '?sheet=Datakaryawan');
+      const data = await res.json();
+      const tbody = document.getElementById('tabel-karyawan');
+      tbody.innerHTML = '';
+
+      data.forEach((item, index) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${index + 1}</td>
+          <td><input type="text" value="${item.nama}" onchange="editKaryawan(${index}, this.value)" /></td>
+          <td>
+            <button class="danger" onclick="hapusKaryawan(${index})">Hapus</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function tambahKaryawan() {
+      const nama = document.getElementById('namaBaru').value.trim();
+      if (!nama) return alert('Nama tidak boleh kosong');
+
+      await fetch(scriptURL, {
+        method: 'POST',
+        body: JSON.stringify({
+          aksi: 'tambah-karyawan',
+          nama: nama
+        })
+      });
+
+      document.getElementById('namaBaru').value = '';
+      loadKaryawan();
+    }
+
+    async function editKaryawan(index, namaBaru) {
+      await fetch(scriptURL, {
+        method: 'POST',
+        body: JSON.stringify({
+          aksi: 'edit-karyawan',
+          index: index,
+          nama: namaBaru
+        })
+      });
+      loadKaryawan();
+    }
+
+    async function hapusKaryawan(index) {
+      if (!confirm('Yakin ingin menghapus karyawan ini?')) return;
+      await fetch(scriptURL, {
+        method: 'POST',
+        body: JSON.stringify({
+          aksi: 'hapus-karyawan',
+          index: index
+        })
+      });
+      loadKaryawan();
+    }
+
+    window.onload = loadKaryawan;
+  </script>
+</body>
+</html>
