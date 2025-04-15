@@ -106,7 +106,9 @@
     const scriptURL = 'https://script.google.com/macros/s/AKfycbwS0vkygWEEK8mQOQ2w_Xglr3Pj1NH-wkpUcfkhaldusZc1mjvWDFpWEyZl2AXdgant/exec';
     let dataKaryawan = [];
     let selectedFile = null;
-
+    if (localStorage.getItem('loggedIn') !== 'true') {
+      window.location.href = 'login.html';
+    }
     async function loadKaryawan() {
       const res = await fetch(scriptURL + '?sheet=Datakaryawan');
       dataKaryawan = await res.json();
