@@ -4,64 +4,63 @@
   <meta charset="UTF-8">
   <title>Rekap Absensi Bulanan</title>
   <style>
-    body { font-family: sans-serif; padding: 20px; }
-    select, table { margin-top: 1rem; }
-    table { border-collapse: collapse; width: 100%; }
-    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
-    th { background-color: #f4f4f4; }
+    body { font-family: sans-serif; padding: 1rem; }
+    table { border-collapse: collapse; width: 100%; font-size: 14px; }
+    th, td { border: 1px solid #ccc; padding: 4px; text-align: center; }
+    th.rotate { writing-mode: vertical-rl; transform: rotate(180deg); }
+    input { margin: 0.5rem 0; }
   </style>
 </head>
 <body>
   <h2>Rekap Absensi Bulanan</h2>
-  <label for="bulan">Pilih Bulan:</label>
-  <input type="month" id="bulan" value="">
+  <label for="bulan">Pilih Bulan (MM/YYYY):</label>
+  <input type="text" id="bulan" placeholder="04/2025" />
+  <label for="nama">Filter Nama:</label>
+  <input type="text" id="nama" placeholder="Nama Karyawan" />
   <button onclick="loadRekap()">Tampilkan</button>
-
-  <table id="tabelRekap" style="display:none;">
-    <thead>
-      <tr>
-        <th>Nama</th>
-        <th>Tanggal</th>
-        <th>Jam Masuk</th>
-        <th>Jam Pulang</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+  <br><br>
+  <div id="rekapContainer">Loading...</div>
 
   <script>
     function loadRekap() {
-      const bulan = document.getElementById('bulan').value;
-      if (!bulan) return alert("Pilih bulan terlebih dahulu!");
+      const bulan = document.getElementById("bulan").value;
+      const nama = document.getElementById("nama").value;
+      const url = `https://script.google.com/macros/s/AKfycbw7wXxKLmGA5B9rQ2K9Gd6ya6wlnMEJcgw2uxi-EZycJLVkI9E-VmiJPX6T6V3NXGE/exec?action=rekap&bulan=${encodeURIComponent(bulan)}&nama=${encodeURIComponent(nama)}`;
+      document.getElementById("rekapContainer").innerHTML = "Loading...";
 
-      fetch(`https://script.google.com/macros/s/AKfycbwEb5xzepA9_swzASFYrNa5XuLW-Sues9xAn86LIe0lRd0QO1Tlw0Atx4yugu2tr6FG/exec?action=rekap&bulan=${bulan}`)
+      fetch(url)
         .then(res => res.json())
-        .then(json => {
-          const tbody = document.querySelector("#tabelRekap tbody");
-          tbody.innerHTML = "";
-
-          if (json.success && json.data.length > 0) {
-            document.getElementById("tabelRekap").style.display = "table";
-            json.data.forEach(row => {
-              tbody.innerHTML += `
-                <tr>
-                  <td>${row.nama}</td>
-                  <td>${row.tanggal}</td>
-                  <td>${row.jamMasuk}</td>
-                  <td>${row.jamPulang}</td>
-                </tr>
-              `;
-            });
-          } else {
-            document.getElementById("tabelRekap").style.display = "none";
-            alert("Tidak ada data absensi di bulan ini.");
-          }
+        .then(data => {
+          if (!data.success) throw new Error(data.message);
+          renderTable(data);
+        })
+        .catch(err => {
+          document.getElementById("rekapContainer").innerText = "Error: " + err.message;
         });
     }
 
-    // Set default bulan ke bulan sekarang
-    document.getElementById("bulan").value = new Date().toISOString().slice(0, 7);
+    function renderTable(data) {
+      let html = "<table><thead><tr><th>Nama Karyawan</th>";
+      data.tanggal.forEach(tgl => {
+        html += `<th>${tgl} Masuk</th><th>${tgl} Pulang</th>`;
+      });
+      html += "</tr></thead><tbody>";
+
+      data.rekap.forEach(row => {
+        html += `<tr><td>${row.nama}</td>`;
+        data.tanggal.forEach(tgl => {
+          html += `<td>${row.masuk[tgl] || "-"}</td><td>${row.pulang[tgl] || "-"}</td>`;
+        });
+        html += "</tr>";
+      });
+
+      html += "</tbody></table>";
+      document.getElementById("rekapContainer").innerHTML = html;
+    }
+
+    // Load default bulan ini
+    document.getElementById("bulan").value = new Date().toLocaleDateString("id-ID", { month: '2-digit', year: 'numeric' });
+    loadRekap();
   </script>
 </body>
 </html>
-
