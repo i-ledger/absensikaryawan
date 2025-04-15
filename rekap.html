@@ -34,7 +34,7 @@
       const bulan = document.getElementById('bulan').value;
       if (!bulan) return alert("Pilih bulan terlebih dahulu!");
 
-      fetch(`https://script.google.com/macros/s/YOUR_DEPLOYED_URL/exec?action=rekap&bulan=${bulan}`)
+      fetch(`https://script.google.com/macros/s/AKfycbyfzVJYoxY1JuxJWbsxUCGG2FZbgLCm3z8DJTKR76JYfeEJEnWsi0YuWEiS50quk6t_/exec?action=rekap&bulan=${bulan}`)
         .then(res => res.json())
         .then(json => {
           const tbody = document.querySelector("#tabelRekap tbody");
