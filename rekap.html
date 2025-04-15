@@ -7,14 +7,15 @@
     body { font-family: sans-serif; padding: 1rem; }
     table { border-collapse: collapse; width: 100%; font-size: 14px; }
     th, td { border: 1px solid #ccc; padding: 4px; text-align: center; }
-    th.rotate { writing-mode: vertical-rl; transform: rotate(180deg); }
-    input { margin: 0.5rem 0; }
+    input { margin: 0.5rem 0.5rem 0.5rem 0; }
   </style>
 </head>
 <body>
-  <h2>Rekap Absensi Bulanan</h2>
-  <label for="bulan">Pilih Bulan (MM/YYYY):</label>
-  <input type="text" id="bulan" placeholder="04/2025" />
+  <h2>Rekap Absensi</h2>
+  <label for="start">Dari Tanggal:</label>
+  <input type="text" id="start" placeholder="01/04/2025" />
+  <label for="end">Sampai:</label>
+  <input type="text" id="end" placeholder="10/04/2025" />
   <label for="nama">Filter Nama:</label>
   <input type="text" id="nama" placeholder="Nama Karyawan" />
   <button onclick="loadRekap()">Tampilkan</button>
@@ -23,9 +24,12 @@
 
   <script>
     function loadRekap() {
-      const bulan = document.getElementById("bulan").value;
+      const start = document.getElementById("start").value;
+      const end = document.getElementById("end").value;
       const nama = document.getElementById("nama").value;
-      const url = `https://script.google.com/macros/s/AKfycbw7wXxKLmGA5B9rQ2K9Gd6ya6wlnMEJcgw2uxi-EZycJLVkI9E-VmiJPX6T6V3NXGE/exec?action=rekap&bulan=${encodeURIComponent(bulan)}&nama=${encodeURIComponent(nama)}`;
+
+      const url = `https://script.google.com/macros/s/AKfycby1xMJhYAaSVzH-837sAOHzov6jqnaoRuVFfTw_6iEZn7urXbaZU59P_GGlB6gguxAs/exec?action=rekap&start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}&nama=${encodeURIComponent(nama)}`;
+      
       document.getElementById("rekapContainer").innerHTML = "Loading...";
 
       fetch(url)
@@ -58,8 +62,13 @@
       document.getElementById("rekapContainer").innerHTML = html;
     }
 
-    // Load default bulan ini
-    document.getElementById("bulan").value = new Date().toLocaleDateString("id-ID", { month: '2-digit', year: 'numeric' });
+    // Default isi dengan tanggal awal dan akhir bulan ini
+    const today = new Date();
+    const first = new Date(today.getFullYear(), today.getMonth(), 1);
+    const last = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+    document.getElementById("start").value = first.toLocaleDateString("id-ID");
+    document.getElementById("end").value = last.toLocaleDateString("id-ID");
+
     loadRekap();
   </script>
 </body>
