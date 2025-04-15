@@ -84,7 +84,7 @@
   <div id="rekapContainer">Loading...</div>
 
   <script>
-    const listNamaURL = 'https://script.google.com/macros/s/AKfycbw3XBUsXThbZpMgBTbeoYSMgeGj71q-N2fvMElkDbry3pez5KpPFFDk0DUYKA_kbjiW/exec?action=listnama';
+    const listNamaURL = 'https://script.google.com/macros/s/AKfycbzNYdb_Hw8uz6QIOV5Tpzkdihter7MlGeg0EoFyPXyIGWH3smTVPvCTLCyGmySZKEYh/exec?action=listnama';
 
     // Generate dropdown bulan (12 bulan terakhir)
     function generateBulanOptions() {
@@ -125,7 +125,7 @@
     function loadRekap() {
       const bulan = document.getElementById("bulan").value;
       const nama = document.getElementById("nama").value;
-      const url = `https://script.google.com/macros/s/AKfycbyHNtF8g4dAHj3KSecEfzvT5ebK1F5-OoEDGD2ledTuEbZmCANg_CGQhocy_o8tlgJ0/exec?action=rekap&bulan=${encodeURIComponent(bulan)}&nama=${encodeURIComponent(nama)}`;
+      const url = `https://script.google.com/macros/s/AKfycbzNYdb_Hw8uz6QIOV5Tpzkdihter7MlGeg0EoFyPXyIGWH3smTVPvCTLCyGmySZKEYh/exec?action=rekap&bulan=${encodeURIComponent(bulan)}&nama=${encodeURIComponent(nama)}`;
       document.getElementById("rekapContainer").innerHTML = "Loading...";
 
       fetch(url)
