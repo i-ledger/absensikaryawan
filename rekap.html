@@ -4,9 +4,7 @@
   <meta charset="UTF-8">
   <title>Rekap Absensi Bulanan</title>
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #f9f9f9;
@@ -26,7 +24,7 @@
       margin-bottom: 1.5rem;
       justify-content: center;
     }
-    .filter input {
+    .filter input, .filter select {
       padding: 0.5rem 1rem;
       font-size: 14px;
       border: 1px solid #ccc;
@@ -77,13 +75,36 @@
 
   <div class="filter">
     <input type="text" id="bulan" placeholder="MM/YYYY" />
-    <input type="text" id="nama" placeholder="Nama Karyawan" />
+    <select id="nama">
+      <option value="">-- Semua Karyawan --</option>
+    </select>
     <button onclick="loadRekap()">Tampilkan</button>
   </div>
 
   <div id="rekapContainer">Loading...</div>
 
   <script>
+    const listNamaURL = 'https://script.google.com/macros/s/AKfycbw3XBUsXThbZpMgBTbeoYSMgeGj71q-N2fvMElkDbry3pez5KpPFFDk0DUYKA_kbjiW/exec?action=listnama';
+
+    // Load daftar nama dari Sheet Datakaryawan
+    function loadNamaKaryawan() {
+      fetch(listNamaURL)
+        .then(res => res.json())
+        .then(data => {
+          if (!data.success) throw new Error("Gagal mengambil data nama karyawan");
+          const select = document.getElementById("nama");
+          data.nama.forEach(n => {
+            const option = document.createElement("option");
+            option.value = n;
+            option.textContent = n;
+            select.appendChild(option);
+          });
+        })
+        .catch(err => {
+          alert("Error mengambil nama karyawan: " + err.message);
+        });
+    }
+
     function loadRekap() {
       const bulan = document.getElementById("bulan").value;
       const nama = document.getElementById("nama").value;
@@ -113,15 +134,16 @@
         data.tanggal.forEach(tgl => {
           html += `<td>${row.masuk[tgl] || "-"}</td><td>${row.pulang[tgl] || "-"}</td>`;
         });
-        html += "</tr>";
+        html += "</tr>`;
       });
 
       html += "</tbody></table>";
       document.getElementById("rekapContainer").innerHTML = html;
     }
 
-    // Auto-load bulan ini
+    // Auto-load
     document.getElementById("bulan").value = new Date().toLocaleDateString("id-ID", { month: '2-digit', year: 'numeric' });
+    loadNamaKaryawan();
     loadRekap();
   </script>
 </body>
