@@ -4,21 +4,83 @@
   <meta charset="UTF-8">
   <title>Rekap Absensi Bulanan</title>
   <style>
-    body { font-family: sans-serif; padding: 1rem; }
-    table { border-collapse: collapse; width: 100%; font-size: 14px; }
-    th, td { border: 1px solid #ccc; padding: 4px; text-align: center; }
-    th.rotate { writing-mode: vertical-rl; transform: rotate(180deg); }
-    input { margin: 0.5rem 0; }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f9f9f9;
+      margin: 0;
+      padding: 2rem;
+      color: #333;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: #2c3e50;
+    }
+    .filter {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      justify-content: center;
+    }
+    .filter input {
+      padding: 0.5rem 1rem;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      width: 200px;
+    }
+    .filter button {
+      padding: 0.5rem 1.2rem;
+      font-size: 14px;
+      border: none;
+      background-color: #3498db;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .filter button:hover {
+      background-color: #2980b9;
+    }
+    #rekapContainer {
+      overflow-x: auto;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      font-size: 13px;
+      background-color: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+    th, td {
+      border: 1px solid #e0e0e0;
+      padding: 6px 8px;
+      text-align: center;
+    }
+    th {
+      background-color: #f1f1f1;
+      color: #2c3e50;
+    }
+    tr:nth-child(even) {
+      background-color: #fafafa;
+    }
   </style>
 </head>
 <body>
   <h2>Rekap Absensi Bulanan</h2>
-  <label for="bulan">Pilih Bulan (MM/YYYY):</label>
-  <input type="text" id="bulan" placeholder="04/2025" />
-  <label for="nama">Filter Nama:</label>
-  <input type="text" id="nama" placeholder="Nama Karyawan" />
-  <button onclick="loadRekap()">Tampilkan</button>
-  <br><br>
+
+  <div class="filter">
+    <input type="text" id="bulan" placeholder="MM/YYYY" />
+    <input type="text" id="nama" placeholder="Nama Karyawan" />
+    <button onclick="loadRekap()">Tampilkan</button>
+  </div>
+
   <div id="rekapContainer">Loading...</div>
 
   <script>
@@ -58,7 +120,7 @@
       document.getElementById("rekapContainer").innerHTML = html;
     }
 
-    // Load default bulan ini
+    // Auto-load bulan ini
     document.getElementById("bulan").value = new Date().toLocaleDateString("id-ID", { month: '2-digit', year: 'numeric' });
     loadRekap();
   </script>
