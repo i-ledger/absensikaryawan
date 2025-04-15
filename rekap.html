@@ -25,7 +25,7 @@
     function loadRekap() {
       const bulan = document.getElementById("bulan").value;
       const nama = document.getElementById("nama").value;
-      const url = `https://script.google.com/macros/s/AKfycbyHNtF8g4dAHj3KSecEfzvT5ebK1F5-OoEDGD2ledTuEbZmCANg_CGQhocy_o8tlgJ0/exec?action=rekap&bulan=${encodeURIComponent(bulan)}&nama=${encodeURIComponent(nama)};
+      const url = `https://script.google.com/macros/s/AKfycbyHNtF8g4dAHj3KSecEfzvT5ebK1F5-OoEDGD2ledTuEbZmCANg_CGQhocy_o8tlgJ0/exec?action=rekap&bulan=${encodeURIComponent(bulan)}&nama=${encodeURIComponent(nama)}`;
       document.getElementById("rekapContainer").innerHTML = "Loading...";
 
       fetch(url)
@@ -42,14 +42,14 @@
     function renderTable(data) {
       let html = "<table><thead><tr><th>Nama Karyawan</th>";
       data.tanggal.forEach(tgl => {
-        html += <th>${tgl} Masuk</th><th>${tgl} Pulang</th>;
+        html += `<th>${tgl} Masuk</th><th>${tgl} Pulang</th>`;
       });
       html += "</tr></thead><tbody>";
 
       data.rekap.forEach(row => {
-        html += <tr><td>${row.nama}</td>;
+        html += `<tr><td>${row.nama}</td>`;
         data.tanggal.forEach(tgl => {
-          html += <td>${row.masuk[tgl] || "-"}</td><td>${row.pulang[tgl] || "-"}</td>;
+          html += `<td>${row.masuk[tgl] || "-"}</td><td>${row.pulang[tgl] || "-"}</td>`;
         });
         html += "</tr>";
       });
