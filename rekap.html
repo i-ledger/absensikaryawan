@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <title>Rekap Absensi Bulanan</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     * { box-sizing: border-box; }
     body {
@@ -61,6 +63,10 @@
       padding: 8px 12px;
       text-align: center;
     }
+    td:first-child {
+      text-align: left;
+      padding-left: 16px;
+    }
     th {
       background-color: #f1f1f1;
       color: #2c3e50;
@@ -68,14 +74,16 @@
     tr:nth-child(even) {
       background-color: #fafafa;
     }
-    .tanggal {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
+    .export-buttons {
+      text-align: center;
+      margin-bottom: 1.5rem;
     }
-    .tanggal div {
-      width: 48%;
-      margin-bottom: 8px;
+    .export-buttons button {
+      margin: 0 8px;
+      background-color: #2ecc71;
+    }
+    .export-buttons button:hover {
+      background-color: #27ae60;
     }
   </style>
 </head>
@@ -90,12 +98,16 @@
     <button onclick="loadRekap()">Tampilkan</button>
   </div>
 
+  <div class="export-buttons">
+    <button onclick="exportToExcel()">Export ke Excel</button>
+    <button onclick="exportToPDF()">Export ke PDF</button>
+  </div>
+
   <div id="rekapContainer">Loading...</div>
 
   <script>
     const listNamaURL = 'https://script.google.com/macros/s/AKfycbzNYdb_Hw8uz6QIOV5Tpzkdihter7MlGeg0EoFyPXyIGWH3smTVPvCTLCyGmySZKEYh/exec?action=listnama';
 
-    // Generate dropdown bulan (12 bulan terakhir)
     function generateBulanOptions() {
       const select = document.getElementById("bulan");
       const now = new Date();
@@ -111,7 +123,6 @@
       }
     }
 
-    // Load nama karyawan dari Sheet
     function loadNamaKaryawan() {
       fetch(listNamaURL)
         .then(res => res.json())
@@ -130,7 +141,8 @@
         });
     }
 
-    // Load data rekap absensi dari Google Script
+    let globalData = null;
+
     function loadRekap() {
       const bulan = document.getElementById("bulan").value;
       const nama = document.getElementById("nama").value;
@@ -141,6 +153,7 @@
         .then(res => res.json())
         .then(data => {
           if (!data.success) throw new Error(data.message);
+          globalData = data;
           renderTable(data);
         })
         .catch(err => {
@@ -148,38 +161,59 @@
         });
     }
 
-    // Render tabel rekap absensi
     function renderTable(data) {
-      let html = "<table><thead><tr><th>Nama Karyawan</th>";
-      
+      let html = "<table id='rekapTable'><thead><tr><th>Nama Karyawan</th>";
       data.tanggal.forEach(tgl => {
-        html += `<th colspan="2">${tgl}</th>`; // Tanggal Masuk dan Pulang
+        html += `<th colspan="2">${tgl}</th>`;
       });
-
       html += "</tr><tr><th></th>";
-      
-      // Add 'Masuk' and 'Pulang' rows under each date
-      data.tanggal.forEach(tgl => {
+      data.tanggal.forEach(() => {
         html += `<th>Masuk</th><th>Pulang</th>`;
       });
-
       html += "</tr></thead><tbody>";
-
       data.rekap.forEach(row => {
         html += `<tr><td>${row.nama}</td>`;
-        
         data.tanggal.forEach(tgl => {
           html += `<td>${row.masuk[tgl] || "-"}</td><td>${row.pulang[tgl] || "-"}</td>`;
         });
-
         html += "</tr>";
       });
-
       html += "</tbody></table>";
       document.getElementById("rekapContainer").innerHTML = html;
     }
 
-    // Inisialisasi saat halaman dimuat
+    function exportToExcel() {
+      if (!globalData) return alert("Data belum dimuat.");
+      const table = document.getElementById("rekapTable");
+      const wb = XLSX.utils.table_to_book(table, { sheet: "Rekap Absensi" });
+      XLSX.writeFile(wb, "Rekap_Absensi.xlsx");
+    }
+
+    async function exportToPDF() {
+      if (!globalData) return alert("Data belum dimuat.");
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ orientation: "landscape" });
+
+      const table = document.getElementById("rekapTable");
+      const rows = [...table.rows].map(row =>
+        [...row.cells].map(cell => cell.innerText)
+      );
+
+      let startY = 10;
+      let rowHeight = 8;
+
+      rows.forEach((row, i) => {
+        let startX = 10;
+        row.forEach((text, j) => {
+          doc.text(text, startX, startY);
+          startX += 40; // adjust column width
+        });
+        startY += rowHeight;
+      });
+
+      doc.save("Rekap_Absensi.pdf");
+    }
+
     generateBulanOptions();
     loadNamaKaryawan();
     loadRekap();
