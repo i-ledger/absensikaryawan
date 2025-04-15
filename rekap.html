@@ -156,6 +156,13 @@
         html += `<th colspan="2">${tgl}</th>`; // Tanggal Masuk dan Pulang
       });
 
+      html += "</tr><tr><th></th>";
+      
+      // Add 'Masuk' and 'Pulang' rows under each date
+      data.tanggal.forEach(tgl => {
+        html += `<th>Masuk</th><th>Pulang</th>`;
+      });
+
       html += "</tr></thead><tbody>";
 
       data.rekap.forEach(row => {
