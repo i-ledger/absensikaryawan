@@ -357,11 +357,7 @@
       }
 
       doc.save(`${judul.replace(/\s+/g, '_')}_${tanggalHariIni}.pdf`);
-    }
 
-    function logout() {
-      localStorage.removeItem('loggedIn');
-      window.location.href = 'login.html';
     }
 
     setTimeout(logout, 3600000);
