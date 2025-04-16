@@ -2,9 +2,7 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Rekap Absensi Bulanan</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <title>Admin Absensi</title>
   <style>
     * { box-sizing: border-box; }
     body {
@@ -16,207 +14,43 @@
     }
     h2 {
       text-align: center;
-      margin-bottom: 1.5rem;
+      margin-bottom: 2rem;
       color: #2c3e50;
     }
-    .filter {
+    .admin-menu {
       display: flex;
-      flex-wrap: wrap;
+      flex-direction: column;
+      align-items: center;
       gap: 1rem;
-      margin-bottom: 1.5rem;
-      justify-content: center;
+      max-width: 400px;
+      margin: auto;
     }
-    .filter select {
-      padding: 0.5rem 1rem;
-      font-size: 14px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      width: 200px;
-    }
-    .filter button {
-      padding: 0.5rem 1.2rem;
-      font-size: 14px;
+    .admin-menu button {
+      padding: 0.75rem 1.5rem;
+      font-size: 15px;
       border: none;
       background-color: #3498db;
       color: white;
-      border-radius: 6px;
+      border-radius: 8px;
       cursor: pointer;
+      width: 100%;
       transition: background-color 0.3s ease;
     }
-    .filter button:hover {
+    .admin-menu button:hover {
       background-color: #2980b9;
-    }
-    #rekapContainer {
-      overflow-x: auto;
-    }
-    table {
-      border-collapse: collapse;
-      width: 100%;
-      font-size: 14px;
-      background-color: white;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 0 10px rgba(0,0,0,0.05);
-    }
-    th, td {
-      border: 1px solid #e0e0e0;
-      padding: 8px 12px;
-      text-align: center;
-    }
-    td:first-child {
-      text-align: left;
-      padding-left: 16px;
-    }
-    th {
-      background-color: #f1f1f1;
-      color: #2c3e50;
-    }
-    tr:nth-child(even) {
-      background-color: #fafafa;
-    }
-    .export-buttons {
-      text-align: center;
-      margin-bottom: 1.5rem;
-    }
-    .export-buttons button {
-      margin: 0 8px;
-      background-color: #2ecc71;
-    }
-    .export-buttons button:hover {
-      background-color: #27ae60;
     }
   </style>
 </head>
 <body>
-  <h2>Rekap Absensi Bulanan</h2>
+  <h2>Dashboard Admin Absensi</h2>
 
-  <div class="filter">
-    <select id="bulan"></select>
-    <select id="nama">
-      <option value="">-- Semua Karyawan --</option>
-    </select>
-    <button onclick="loadRekap()">Tampilkan</button>
+  <div class="admin-menu">
+    <button onclick="window.location.href='datakaryawan.html'">Kelola Data Karyawan</button>
+    <button onclick="window.location.href='index.html'">Form Absensi</button>
+    <button onclick="window.location.href='rekap.html'">Rekap Absensi Bulanan</button>
+    <button onclick="window.location.href='pembayaran.html'">Pembayaran & Masa Aktif</button>
+    <!-- Tambahkan tombol lain sesuai kebutuhan -->
   </div>
 
-  <div class="export-buttons">
-    <button onclick="exportToExcel()">Export ke Excel</button>
-    <button onclick="exportToPDF()">Export ke PDF</button>
-  </div>
-
-  <div id="rekapContainer">Loading...</div>
-
-  <script>
-    const listNamaURL = 'https://script.google.com/macros/s/AKfycbzNYdb_Hw8uz6QIOV5Tpzkdihter7MlGeg0EoFyPXyIGWH3smTVPvCTLCyGmySZKEYh/exec?action=listnama';
-
-    function generateBulanOptions() {
-      const select = document.getElementById("bulan");
-      const now = new Date();
-      for (let i = 0; i < 12; i++) {
-        const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const year = date.getFullYear();
-        const value = `${month}/${year}`;
-        const option = document.createElement("option");
-        option.value = value;
-        option.textContent = value;
-        select.appendChild(option);
-      }
-    }
-
-    function loadNamaKaryawan() {
-      fetch(listNamaURL)
-        .then(res => res.json())
-        .then(data => {
-          if (!data.success) throw new Error("Gagal mengambil data nama karyawan");
-          const select = document.getElementById("nama");
-          data.nama.forEach(n => {
-            const option = document.createElement("option");
-            option.value = n;
-            option.textContent = n;
-            select.appendChild(option);
-          });
-        })
-        .catch(err => {
-          alert("Error mengambil nama karyawan: " + err.message);
-        });
-    }
-
-    let globalData = null;
-
-    function loadRekap() {
-      const bulan = document.getElementById("bulan").value;
-      const nama = document.getElementById("nama").value;
-      const url = `https://script.google.com/macros/s/AKfycbzNYdb_Hw8uz6QIOV5Tpzkdihter7MlGeg0EoFyPXyIGWH3smTVPvCTLCyGmySZKEYh/exec?action=rekap&bulan=${encodeURIComponent(bulan)}&nama=${encodeURIComponent(nama)}`; 
-      document.getElementById("rekapContainer").innerHTML = "Loading...";
-
-      fetch(url)
-        .then(res => res.json())
-        .then(data => {
-          if (!data.success) throw new Error(data.message);
-          globalData = data;
-          renderTable(data);
-        })
-        .catch(err => {
-          document.getElementById("rekapContainer").innerText = "Error: " + err.message;
-        });
-    }
-
-    function renderTable(data) {
-      let html = "<table id='rekapTable'><thead><tr><th>Nama Karyawan</th>";
-      data.tanggal.forEach(tgl => {
-        html += `<th colspan="2">${tgl}</th>`;
-      });
-      html += "</tr><tr><th></th>";
-      data.tanggal.forEach(() => {
-        html += `<th>Masuk</th><th>Pulang</th>`;
-      });
-      html += "</tr></thead><tbody>";
-      data.rekap.forEach(row => {
-        html += `<tr><td>${row.nama}</td>`;
-        data.tanggal.forEach(tgl => {
-          html += `<td>${row.masuk[tgl] || "-"}</td><td>${row.pulang[tgl] || "-"}</td>`;
-        });
-        html += "</tr>";
-      });
-      html += "</tbody></table>";
-      document.getElementById("rekapContainer").innerHTML = html;
-    }
-
-    function exportToExcel() {
-      if (!globalData) return alert("Data belum dimuat.");
-      const table = document.getElementById("rekapTable");
-      const wb = XLSX.utils.table_to_book(table, { sheet: "Rekap Absensi" });
-      XLSX.writeFile(wb, "Rekap_Absensi.xlsx");
-    }
-
-    async function exportToPDF() {
-      if (!globalData) return alert("Data belum dimuat.");
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF({ orientation: "landscape" });
-
-      const table = document.getElementById("rekapTable");
-      const rows = [...table.rows].map(row =>
-        [...row.cells].map(cell => cell.innerText)
-      );
-
-      let startY = 10;
-      let rowHeight = 8;
-
-      rows.forEach((row, i) => {
-        let startX = 10;
-        row.forEach((text, j) => {
-          doc.text(text, startX, startY);
-          startX += 40; // adjust column width
-        });
-        startY += rowHeight;
-      });
-
-      doc.save("Rekap_Absensi.pdf");
-    }
-
-    generateBulanOptions();
-    loadNamaKaryawan();
-    loadRekap();
-  </script>
 </body>
 </html>
