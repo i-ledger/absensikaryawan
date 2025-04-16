@@ -2,9 +2,8 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin - Data Absensi</title>
-  <link rel="icon" type="image/png" href="pertamina-logoicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Absensi Driver</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -12,34 +11,31 @@
       --primary-dark: #0d47a1;
       --danger: #e53935;
       --danger-dark: #b71c1c;
-      --bg-light: #f8fafc;
-      --white: #ffffff;
-      --text: #1f2937;
-      --border: #e5e7eb;
+      --bg-light: #f4f6f8;
+      --text: #333;
     }
 
     * {
       box-sizing: border-box;
-      margin: 0;
-      padding: 0;
     }
 
-    body {
+    html, body {
+      margin: 0;
+      padding: 0;
       font-family: 'Inter', sans-serif;
       background-color: var(--bg-light);
       color: var(--text);
-      line-height: 1.5;
     }
 
     .header {
-      background: var(--white);
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-      padding: 16px 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
       gap: 12px;
+      padding: 16px 24px;
+      background: #fff;
+      box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
     }
 
     .header-left {
@@ -49,48 +45,53 @@
     }
 
     .header img {
-      height: 45px;
+      height: 48px;
     }
 
-    h2 {
-      font-size: 1.5rem;
-      color: var(--primary-dark);
+    .header h2 {
+      font-size: 1.6em;
       font-weight: 600;
+      margin: 0;
+      color: var(--primary);
     }
 
     .filters {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
       padding: 20px;
-      background-color: var(--white);
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-      justify-content: center;
+      background: #fff;
+      margin-top: 8px;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
     }
 
     .filters label {
       font-weight: 500;
-      margin-right: 6px;
+      margin-bottom: 4px;
+      display: block;
+      font-size: 14px;
     }
 
     .filters input,
     .filters select {
-      padding: 8px 12px;
-      border: 1px solid var(--border);
-      border-radius: 6px;
+      width: 100%;
+      padding: 10px 12px;
       font-size: 14px;
-      background: white;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      transition: all 0.3s ease;
     }
 
     button {
-      padding: 10px 16px;
+      padding: 10px 14px;
       background-color: var(--primary);
-      color: var(--white);
+      color: white;
       border: none;
-      border-radius: 6px;
+      border-radius: 8px;
       font-size: 14px;
       cursor: pointer;
-      transition: background-color 0.3s ease;
+      transition: background 0.3s ease;
     }
 
     button:hover {
@@ -99,8 +100,8 @@
 
     .logout-button {
       background-color: var(--danger);
-      margin: 24px auto;
       display: block;
+      margin: 20px auto;
     }
 
     .logout-button:hover {
@@ -110,21 +111,23 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      margin: 24px auto;
-      background-color: var(--white);
-      box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
+      margin: 24px 0;
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.04);
     }
 
     th, td {
-      padding: 14px;
-      border: 1px solid var(--border);
-      font-size: 14px;
+      padding: 14px 10px;
       text-align: center;
+      border-bottom: 1px solid #eee;
+      font-size: 14px;
     }
 
     th {
       background-color: var(--primary);
-      color: var(--white);
+      color: white;
       position: sticky;
       top: 0;
       z-index: 1;
@@ -139,20 +142,21 @@
     }
 
     tr:nth-child(even) {
-      background-color: #f9fafb;
+      background-color: #fafafa;
     }
 
     .foto-preview {
       max-width: 60px;
       max-height: 60px;
-      border-radius: 6px;
       object-fit: cover;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     }
 
     @media (max-width: 768px) {
-      .filters {
+      .header {
         flex-direction: column;
-        align-items: center;
+        align-items: flex-start;
       }
 
       table, th, td {
@@ -163,15 +167,10 @@
         max-width: 50px;
         max-height: 50px;
       }
-
-      .header {
-        flex-direction: column;
-        align-items: flex-start;
-      }
     }
 
     @media (max-width: 480px) {
-      h2 {
+      .header h2 {
         font-size: 1.2em;
       }
     }
@@ -180,35 +179,35 @@
 <body>
   <div class="header">
     <div class="header-left">
-      <img src="pertamina-logo.png" alt="Logo">
-      <h2>Data Absensi Driver</h2>
+      <img src="logo.png" alt="Logo">
+      <h2>Admin Absensi Driver</h2>
     </div>
+    <button onclick="logout()" class="logout-button">Logout</button>
   </div>
 
   <div class="filters">
     <div>
-      <label for="startDate">Dari:</label>
-      <input type="date" id="startDate">
+      <label for="filterTanggal">Tanggal:</label>
+      <input type="date" id="filterTanggal" onchange="applyFilters()">
     </div>
     <div>
-      <label for="endDate">Sampai:</label>
-      <input type="date" id="endDate">
+      <label for="filterNama">Nama:</label>
+      <select id="filterNama" onchange="applyFilters()">
+        <option value="">Semua</option>
+      </select>
     </div>
-    <div>
-      <label for="namaFilter">Nama:</label>
-      <select id="namaFilter"></select>
+    <div style="display: flex; align-items: flex-end; gap: 8px;">
+      <button onclick="cetakAbsensi()">Cetak</button>
+      <button onclick="exportAbsensi()">Export</button>
     </div>
-    <button onclick="filterData()">Filter</button>
-    <button onclick="cetakAbsensi()">Cetak</button>
-    <button onclick="exportToExcel()">Export</button>
   </div>
 
-  <div style="overflow-x: auto;">
+  <div style="overflow-x:auto; padding: 20px;">
     <table id="absensiTable">
       <thead>
         <tr>
           <th>No</th>
-          <th>Tanggal & Jam</th>
+          <th>Tanggal</th>
           <th>Nama</th>
           <th>Lokasi</th>
           <th>Foto</th>
@@ -218,9 +217,79 @@
     </table>
   </div>
 
-  <button class="logout-button" onclick="logout()">Logout</button>
+  <script>
+    const sheetURL = 'https://script.google.com/macros/s/AKfycbwfod80fKmMDq4AuKIJVeknjmS75V2hwrDNL6OXuhTHQtDgmjO-maHOATvPH2MbVW8B/exec';
+    let absensiData = [];
 
-  <!-- Tambahkan script.js kamu di sini -->
-  <script src="script.js"></script>
+    window.onload = function () {
+      fetch(sheetURL)
+        .then(res => res.json())
+        .then(data => {
+          absensiData = data;
+          populateNamaFilter();
+          displayTable(data);
+        });
+    };
+
+    function populateNamaFilter() {
+      const select = document.getElementById('filterNama');
+      const namaSet = new Set(absensiData.map(item => item.Nama));
+      namaSet.forEach(nama => {
+        const option = document.createElement('option');
+        option.value = nama;
+        option.textContent = nama;
+        select.appendChild(option);
+      });
+    }
+
+    function displayTable(data) {
+      const tbody = document.querySelector('#absensiTable tbody');
+      tbody.innerHTML = '';
+      data.forEach((item, index) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${index + 1}</td>
+          <td>${item.Timestamp}</td>
+          <td>${item.Nama}</td>
+          <td>${item.Lokasi}</td>
+          <td><img src="${item.Foto}" class="foto-preview" alt="Foto"></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function applyFilters() {
+      const tanggal = document.getElementById('filterTanggal').value;
+      const nama = document.getElementById('filterNama').value;
+      const filtered = absensiData.filter(item => {
+        const matchTanggal = tanggal === '' || item.Timestamp.includes(tanggal);
+        const matchNama = nama === '' || item.Nama === nama;
+        return matchTanggal && matchNama;
+      });
+      displayTable(filtered);
+    }
+
+    function cetakAbsensi() {
+      window.print();
+    }
+
+    function exportAbsensi() {
+      let csv = 'No,Tanggal,Nama,Lokasi,Foto\n';
+      absensiData.forEach((item, i) => {
+        csv += `${i + 1},"${item.Timestamp}","${item.Nama}","${item.Lokasi}","${item.Foto}"\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'absensi.csv';
+      a.click();
+    }
+
+    function logout() {
+      localStorage.removeItem('isLoggedIn');
+      window.location.href = 'index.html';
+    }
+  </script>
 </body>
 </html>
