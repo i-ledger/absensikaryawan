@@ -7,30 +7,30 @@
   <link rel="icon" type="image/png" href="pertamina-logoicon.png">
   <style>
     :root {
-      --primary: #2c7be5;
-      --primary-dark: #1a5bb8;
-      --danger: #f44336;
-      --danger-dark: #c62828;
-      --bg-light: #f1f5f9;
-      --text: #1e293b;
-      --card: #ffffff;
+      --primary: #2c3e50;
+      --accent: #3498db;
+      --danger: #e74c3c;
+      --bg: #ecf0f1;
+      --white: #ffffff;
+      --text: #2c3e50;
     }
 
-    body {
+    html, body {
       margin: 0;
+      padding: 0;
       font-family: 'Segoe UI', sans-serif;
-      background-color: var(--bg-light);
+      background-color: var(--bg);
       color: var(--text);
     }
 
     .header {
-      background-color: var(--card);
-      padding: 16px 24px;
       display: flex;
-      flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      padding: 20px;
+      background: var(--white);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      flex-wrap: wrap;
       gap: 16px;
     }
 
@@ -41,86 +41,67 @@
     }
 
     .header img {
-      height: 48px;
+      height: 50px;
     }
 
-    .header h2 {
+    h2 {
       margin: 0;
-      color: var(--primary-dark);
-      font-size: 1.6rem;
+      font-size: 1.5em;
+      color: var(--accent);
     }
 
     .filters {
-      background-color: var(--card);
-      padding: 16px;
       display: flex;
       flex-wrap: wrap;
-      align-items: center;
+      gap: 10px;
       justify-content: center;
-      gap: 12px;
-      margin-top: 12px;
-      border-radius: 8px;
-      box-shadow: 0 1px 5px rgba(0,0,0,0.03);
-    }
-
-    .filters label {
-      font-weight: 500;
+      padding: 20px;
+      background-color: var(--white);
+      box-shadow: 0 1px 6px rgba(0,0,0,0.05);
     }
 
     .filters input,
-    .filters select {
-      padding: 8px 12px;
+    .filters select,
+    .filters button {
+      padding: 10px 12px;
       font-size: 14px;
       border-radius: 6px;
       border: 1px solid #ccc;
     }
 
     .filters button {
-      background-color: var(--primary);
+      background-color: var(--accent);
       color: white;
       border: none;
-      padding: 10px 15px;
-      border-radius: 6px;
       cursor: pointer;
-      transition: background 0.3s;
     }
 
     .filters button:hover {
-      background-color: var(--primary-dark);
+      background-color: #2980b9;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
       margin: 20px 0;
-      background-color: var(--card);
-      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+      background-color: var(--white);
+      box-shadow: 0 1px 8px rgba(0,0,0,0.05);
     }
 
     th, td {
       padding: 12px;
-      border: 1px solid #e2e8f0;
+      border: 1px solid #ddd;
       text-align: center;
       font-size: 14px;
     }
 
     th {
-      background-color: var(--primary);
-      color: white;
-      position: sticky;
-      top: 0;
-    }
-
-    td:first-child,
-    th:first-child {
-      position: sticky;
-      left: 0;
-      background-color: var(--primary-dark);
+      background-color: var(--accent);
       color: white;
     }
 
     tr:nth-child(even) {
-      background-color: #f9fafb;
+      background-color: #f9f9f9;
     }
 
     .foto-preview {
@@ -131,32 +112,28 @@
     }
 
     .logout-button {
-      margin: 30px auto;
       background-color: var(--danger);
+      color: white;
+      margin: 20px auto;
       display: block;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
     }
 
     .logout-button:hover {
-      background-color: var(--danger-dark);
+      background-color: #c0392b;
     }
 
     @media (max-width: 768px) {
       .filters {
         flex-direction: column;
-      }
-
-      .header {
-        flex-direction: column;
-        align-items: flex-start;
+        align-items: center;
       }
 
       table, th, td {
         font-size: 12px;
-      }
-
-      .foto-preview {
-        max-width: 50px;
-        max-height: 50px;
       }
     }
   </style>
@@ -171,17 +148,14 @@
 
   <div class="filters">
     <button onclick="window.location.href='dashboard.html'">← Dashboard</button>
-
     <label for="filter-tanggal">Tanggal:</label>
     <input type="date" id="filter-tanggal">
-
     <label for="filter-absen">Tipe Absen:</label>
     <select id="filter-absen">
       <option value="">Semua</option>
       <option value="masuk">Absen Masuk</option>
       <option value="pulang">Absen Pulang</option>
     </select>
-
     <button onclick="renderTable()">Terapkan Filter</button>
     <button onclick="exportExcel()">Export Excel</button>
     <button onclick="exportPDF()">Export PDF</button>
@@ -203,7 +177,8 @@
 
   <button class="logout-button" onclick="logout()">Logout</button>
 
-  <!-- Script tidak diubah, hanya pastikan renderTable() dan tanggalFilter berjalan -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
   <script>
     if (localStorage.getItem('loggedIn') !== 'true') {
       window.location.href = 'login.html';
@@ -215,20 +190,21 @@
     const filterAbsen = document.getElementById("filter-absen");
 
     function formatTimestamp(isoString) {
+      if (!isoString) return '-';
       const date = new Date(isoString);
-      return isNaN(date) ? "-" : date.toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' ' + date.toLocaleTimeString('id-ID');
+      return date.toLocaleDateString('id-ID') + ' ' + date.toLocaleTimeString('id-ID');
     }
 
     function formatTanggalKeInput(isoString) {
+      if (!isoString) return '';
       const date = new Date(isoString);
-      return isNaN(date) ? "" : date.toISOString().split('T')[0];
+      return date.toISOString().split('T')[0];
     }
 
     async function fetchData() {
       try {
         const response = await fetch(endpoint);
-        const data = await response.json();
-        return data;
+        return await response.json();
       } catch (err) {
         console.error("Gagal mengambil data:", err);
         return [];
@@ -239,7 +215,6 @@
       const data = await fetchData();
       const tanggalFilter = filterTanggal.value;
       const absenFilter = filterAbsen.value;
-
       tableBody.innerHTML = "";
 
       const filtered = data.filter(d => {
@@ -250,34 +225,21 @@
 
       filtered.forEach((item, index) => {
         const row = document.createElement("tr");
-        const fotoSrc = item.Foto?.startsWith("data:image") ? item.Foto : "https://via.placeholder.com/80?text=No+Image";
-
         row.innerHTML = `
           <td>${index + 1}</td>
-          <td>${item.Nama || "-"}</td>
+          <td>${item.Nama || '-'}</td>
           <td>${formatTimestamp(item.Timestamp)}</td>
           <td><a href="${item.Lokasi}" target="_blank">Lihat Lokasi</a></td>
-          <td><img class="foto-preview" src="${fotoSrc}" alt="foto" /></td>
-          <td>${item.Tipe || "-"}</td>
+          <td><img class="foto-preview" src="${item.Foto?.startsWith('data:image') ? item.Foto : 'https://via.placeholder.com/80?text=No+Image'}" /></td>
+          <td>${item.Tipe || '-'}</td>
         `;
         tableBody.appendChild(row);
       });
     }
 
-    filterTanggal.addEventListener("change", renderTable);
-    filterAbsen.addEventListener("change", renderTable);
-    window.addEventListener("load", renderTable);
-
     function exportExcel() {
       const wb = XLSX.utils.book_new();
-      const ws_data = [];
-      const absenFilter = filterAbsen.value;
-      const judul = absenFilter === "pulang" ? "Absensi Pulang" :
-                    absenFilter === "masuk" ? "Absensi Masuk" : "Semua Data Absensi";
-      const tanggalHariIni = new Date().toISOString().split('T')[0];
-      ws_data.push([judul], []);
-      ws_data.push(["No", "Nama", "Tanggal & Jam", "Lokasi", "Tipe Absen"]);
-
+      const ws_data = [["No", "Nama", "Tanggal & Jam", "Lokasi", "Tipe Absen"]];
       const rows = Array.from(tableBody.children).map(row => [
         row.children[0].textContent,
         row.children[1].textContent,
@@ -286,54 +248,35 @@
         row.children[5].textContent
       ]);
       ws_data.push(...rows);
-
       const ws = XLSX.utils.aoa_to_sheet(ws_data);
       XLSX.utils.book_append_sheet(wb, ws, "Absensi");
-      XLSX.writeFile(wb, `${judul.replace(/\s+/g, '_')}_${tanggalHariIni}.xlsx`);
+      XLSX.writeFile(wb, `Absensi_${new Date().toISOString().split('T')[0]}.xlsx`);
     }
 
     async function exportPDF() {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
-      const absenFilter = filterAbsen.value;
-      const judul = absenFilter === "pulang" ? "Absensi Pulang" :
-                    absenFilter === "masuk" ? "Absensi Masuk" : "Semua Data Absensi";
-      const tanggalHariIni = new Date().toISOString().split('T')[0];
-
       doc.setFontSize(16);
-      doc.text(judul, 20, 20);
+      doc.text("Data Absensi", 20, 20);
       let y = 30;
-
       for (let i = 0; i < tableBody.children.length; i++) {
         const row = tableBody.children[i];
         const nama = row.children[1].textContent;
         const tanggal = row.children[2].textContent;
         const lokasi = row.children[3].textContent;
         const tipe = row.children[5].textContent;
-        const imgTag = row.children[4].querySelector("img");
-
         doc.setFontSize(10);
         doc.text(`${i + 1}. Nama: ${nama}`, 20, y);
         doc.text(`Tanggal & Jam: ${tanggal}`, 20, y + 5);
         doc.text(`Lokasi: ${lokasi}`, 20, y + 10);
         doc.text(`Tipe Absen: ${tipe}`, 20, y + 15);
-
-        if (imgTag && imgTag.src.startsWith("data:image")) {
-          try {
-            doc.addImage(imgTag.src, "JPEG", 140, y, 40, 40);
-          } catch (e) {
-            console.warn("Gagal menyisipkan gambar:", e);
-          }
-        }
-
-        y += 50;
+        y += 25;
         if (y > 270) {
           doc.addPage();
           y = 20;
         }
       }
-
-      doc.save(`${judul.replace(/\s+/g, '_')}_${tanggalHariIni}.pdf`);
+      doc.save(`Absensi_${new Date().toISOString().split('T')[0]}.pdf`);
     }
 
     function logout() {
@@ -342,8 +285,7 @@
     }
 
     setTimeout(logout, 3600000);
+    window.addEventListener("load", renderTable);
   </script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
 </body>
 </html>
