@@ -230,6 +230,10 @@
       XLSX.utils.book_append_sheet(wb, ws, "Datakaryawan");
       XLSX.writeFile(wb, "Daftar_Karyawan.xlsx");
     }
+        function logout() {
+      localStorage.removeItem('loggedIn');
+      window.location.href = 'login.html';
+    }
 
     window.onload = loadKaryawan;
   </script>
