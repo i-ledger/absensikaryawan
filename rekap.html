@@ -46,6 +46,23 @@
     .filter button:hover {
       background-color: #2980b9;
     }
+    .kembali {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    .kembali button {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 0.5rem 1.2rem;
+      font-size: 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .kembali button:hover {
+      background-color: #2980b9;
+    }
     #rekapContainer {
       overflow-x: auto;
     }
@@ -80,7 +97,7 @@
     }
     .export-buttons button {
       margin: 0 8px;
-      background-color: #2ecc71;
+      background-color: #3498db;
       color: white;
       border: none;
       padding: 0.5rem 1.2rem;
@@ -90,20 +107,17 @@
       font-size: 14px;
     }
     .export-buttons button:hover {
-      background-color: #27ae60;
-    }
-    .export-buttons .admin-btn {
-      background-color: #e67e22;
-    }
-    .export-buttons .admin-btn:hover {
-      background-color: #d35400;
+      background-color: #2980b9;
     }
   </style>
 </head>
 <body>
   <h2>Rekap Absensi Bulanan</h2>
+
   <div class="kembali">
     <button onclick="window.location.href='admin.html'">← Kembali ke Admin</button>  
+  </div>
+
   <div class="filter">
     <select id="bulan"></select>
     <select id="nama">
@@ -115,7 +129,6 @@
   <div class="export-buttons">
     <button onclick="exportToExcel()">Export ke Excel</button>
     <button onclick="exportToPDF()">Export ke PDF</button>
-
   </div>
 
   <div id="rekapContainer">Loading...</div>
@@ -189,49 +202,4 @@
       data.rekap.forEach(row => {
         html += `<tr><td>${row.nama}</td>`;
         data.tanggal.forEach(tgl => {
-          html += `<td>${row.masuk[tgl] || "-"}</td><td>${row.pulang[tgl] || "-"}</td>`;
-        });
-        html += "</tr>";
-      });
-      html += "</tbody></table>";
-      document.getElementById("rekapContainer").innerHTML = html;
-    }
-
-    function exportToExcel() {
-      if (!globalData) return alert("Data belum dimuat.");
-      const table = document.getElementById("rekapTable");
-      const wb = XLSX.utils.table_to_book(table, { sheet: "Rekap Absensi" });
-      XLSX.writeFile(wb, "Rekap_Absensi.xlsx");
-    }
-
-    async function exportToPDF() {
-      if (!globalData) return alert("Data belum dimuat.");
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF({ orientation: "landscape" });
-
-      const table = document.getElementById("rekapTable");
-      const rows = [...table.rows].map(row =>
-        [...row.cells].map(cell => cell.innerText)
-      );
-
-      let startY = 10;
-      let rowHeight = 8;
-
-      rows.forEach((row, i) => {
-        let startX = 10;
-        row.forEach((text, j) => {
-          doc.text(text, startX, startY);
-          startX += 40; // adjust column width
-        });
-        startY += rowHeight;
-      });
-
-      doc.save("Rekap_Absensi.pdf");
-    }
-
-    generateBulanOptions();
-    loadNamaKaryawan();
-    loadRekap();
-  </script>
-</body>
-</html>
+          html += `<td>${row.masuk[tgl] || "-"}</td><td>${row.pulang[tgl
