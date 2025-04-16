@@ -5,33 +5,41 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin - Data Absensi</title>
   <link rel="icon" type="image/png" href="pertamina-logoicon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
     :root {
       --primary: #1976d2;
       --primary-dark: #0d47a1;
       --danger: #e53935;
       --danger-dark: #b71c1c;
-      --bg-light: #f4f6f8;
-      --text: #333;
+      --bg-light: #f8fafc;
+      --white: #ffffff;
+      --text: #1f2937;
+      --border: #e5e7eb;
     }
 
-    html, body {
+    * {
+      box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
       background-color: var(--bg-light);
       color: var(--text);
+      line-height: 1.5;
     }
 
     .header {
+      background: var(--white);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      padding: 16px 24px;
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      padding: 20px;
-      background: white;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      gap: 16px;
+      align-items: center;
       flex-wrap: wrap;
+      gap: 12px;
     }
 
     .header-left {
@@ -41,60 +49,48 @@
     }
 
     .header img {
-      height: 50px;
+      height: 45px;
     }
 
     h2 {
-      color: var(--primary);
-      margin: 0;
-      font-size: 1.5em;
-    }
-
-    .header button {
-      padding: 10px 15px;
-      background-color: green;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-size: 14px;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
-
-    .header button:hover {
-      background-color: darkgreen;
+      font-size: 1.5rem;
+      color: var(--primary-dark);
+      font-weight: 600;
     }
 
     .filters {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
-      justify-content: center;
+      gap: 12px;
       padding: 20px;
-      background-color: white;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      background-color: var(--white);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      justify-content: center;
     }
 
     .filters label {
       font-weight: 500;
+      margin-right: 6px;
     }
 
-    .filters input, .filters select {
+    .filters input,
+    .filters select {
       padding: 8px 12px;
-      border: 1px solid #ccc;
+      border: 1px solid var(--border);
       border-radius: 6px;
       font-size: 14px;
+      background: white;
     }
 
     button {
-      padding: 10px 15px;
+      padding: 10px 16px;
       background-color: var(--primary);
-      color: white;
+      color: var(--white);
       border: none;
       border-radius: 6px;
       font-size: 14px;
       cursor: pointer;
-      transition: background 0.3s ease;
+      transition: background-color 0.3s ease;
     }
 
     button:hover {
@@ -103,7 +99,7 @@
 
     .logout-button {
       background-color: var(--danger);
-      margin: 20px auto;
+      margin: 24px auto;
       display: block;
     }
 
@@ -114,21 +110,21 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      margin: 20px 0;
-      background-color: white;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      margin: 24px auto;
+      background-color: var(--white);
+      box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
     }
 
     th, td {
-      padding: 12px;
-      border: 1px solid #eee;
-      text-align: center;
+      padding: 14px;
+      border: 1px solid var(--border);
       font-size: 14px;
+      text-align: center;
     }
 
     th {
       background-color: var(--primary);
-      color: white;
+      color: var(--white);
       position: sticky;
       top: 0;
       z-index: 1;
@@ -143,7 +139,7 @@
     }
 
     tr:nth-child(even) {
-      background-color: #f9f9f9;
+      background-color: #f9fafb;
     }
 
     .foto-preview {
@@ -175,7 +171,7 @@
     }
 
     @media (max-width: 480px) {
-      .header h2 {
+      h2 {
         font-size: 1.2em;
       }
     }
@@ -184,194 +180,47 @@
 <body>
   <div class="header">
     <div class="header-left">
-      <img src="pertamina-logo.jpg" alt="Logo Pertamina">
-      <h2>Data Absensi Karyawan </h2>
+      <img src="pertamina-logo.png" alt="Logo">
+      <h2>Data Absensi Driver</h2>
     </div>
-    <div style="display: flex; gap: 10px;">
-    </div>
-  </div>
-  <div class="filters">
-    <div class="kembali">
-<button onclick="window.location.href='dashboard.html'">← Dashboard</button>
-    <label for="filter-tanggal">Tanggal:</label>
-    <input type="date" id="filter-tanggal">
-    <label for="filter-absen">Tipe Absen:</label>
-    <select id="filter-absen">
-      <option value="">Semua</option>
-      <option value="masuk">Absen Masuk</option>
-      <option value="pulang">Absen Pulang</option>
-    </select>
-    <button onclick="renderTable()">Terapkan Filter</button>
-    <button onclick="exportExcel()">Export Excel</button>
-    <button onclick="exportPDF()">Export PDF</button>
   </div>
 
-  <table id="absensi-table">
-    <thead>
-      <tr>
-        <th>No</th>
-        <th>Nama</th>
-        <th>Tanggal & Jam</th>
-        <th>Lokasi</th>
-        <th>Foto</th>
-        <th>Tipe Absen</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+  <div class="filters">
+    <div>
+      <label for="startDate">Dari:</label>
+      <input type="date" id="startDate">
+    </div>
+    <div>
+      <label for="endDate">Sampai:</label>
+      <input type="date" id="endDate">
+    </div>
+    <div>
+      <label for="namaFilter">Nama:</label>
+      <select id="namaFilter"></select>
+    </div>
+    <button onclick="filterData()">Filter</button>
+    <button onclick="cetakAbsensi()">Cetak</button>
+    <button onclick="exportToExcel()">Export</button>
+  </div>
+
+  <div style="overflow-x: auto;">
+    <table id="absensiTable">
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>Tanggal & Jam</th>
+          <th>Nama</th>
+          <th>Lokasi</th>
+          <th>Foto</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
 
   <button class="logout-button" onclick="logout()">Logout</button>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
-  <script>
-    if (localStorage.getItem('loggedIn') !== 'true') {
-      window.location.href = 'login.html';
-    }
-
-    const endpoint = 'https://script.google.com/macros/s/AKfycbzNufYSn_hA-t_qO8g05_OkYJaLdhckshAgbD8LX6j7q7hew6tLDKfko-2PtUnzZK-m/exec';
-    const tableBody = document.querySelector("#absensi-table tbody");
-    const filterTanggal = document.getElementById("filter-tanggal");
-    const filterAbsen = document.getElementById("filter-absen");
-
-    function formatTimestamp(isoString) {
-      try {
-        const date = new Date(isoString);
-        return date.toLocaleDateString('id-ID', {
-          day: '2-digit', month: '2-digit', year: 'numeric',
-        }) + ' ' + date.toLocaleTimeString('id-ID');
-      } catch {
-        return isoString;
-      }
-    }
-
-    function formatTanggalKeInput(isoString) {
-      const date = new Date(isoString);
-      return date.toISOString().split('T')[0];
-    }
-
-    async function fetchData() {
-      try {
-        const response = await fetch(endpoint);
-        const data = await response.json();
-        return data;
-      } catch (err) {
-        console.error("Gagal mengambil data:", err);
-        return [];
-      }
-    }
-
-    async function renderTable() {
-      const data = await fetchData();
-      const tanggalFilter = filterTanggal.value;
-      const absenFilter = filterAbsen.value;
-
-      tableBody.innerHTML = "";
-
-      const filtered = data.filter(d => {
-        const matchesTanggal = !tanggalFilter || formatTanggalKeInput(d.Timestamp) === tanggalFilter;
-        const matchesAbsen = !absenFilter || d.Tipe === absenFilter;
-        return matchesTanggal && matchesAbsen;
-      });
-
-      filtered.forEach((item, index) => {
-        const row = document.createElement("tr");
-        const fotoHTML = item.Foto?.startsWith("data:image")
-          ? `<img class="foto-preview" src="${item.Foto}" alt="foto" />`
-          : `<img class="foto-preview" src="https://via.placeholder.com/80?text=No+Image" alt="no image" />`;
-
-        row.innerHTML = ` 
-          <td>${index + 1}</td>
-          <td>${item.Nama || "-"}</td>
-          <td>${formatTimestamp(item.Timestamp) || "-"}</td>
-          <td><a href="${item.Lokasi}" target="_blank">Lihat Lokasi</a></td>
-          <td>${fotoHTML}</td>
-          <td>${item.Tipe || "-"}</td>
-        `;
-        tableBody.appendChild(row);
-      });
-    }
-
-    filterTanggal.addEventListener("change", renderTable);
-    filterAbsen.addEventListener("change", renderTable);
-    window.addEventListener("load", renderTable);
-
-    function exportExcel() {
-      const wb = XLSX.utils.book_new();
-      const ws_data = [];
-      const absenFilter = filterAbsen.value;
-      const judul = absenFilter === "pulang" ? "Absensi Pulang" :
-                    absenFilter === "masuk" ? "Absensi Masuk" : "Semua Data Absensi";
-
-      const tanggalHariIni = new Date().toISOString().split('T')[0];
-      ws_data.push([judul], []);
-      ws_data.push(["No", "Nama", "Tanggal & Jam", "Lokasi", "Tipe Absen"]);
-
-      const rows = Array.from(tableBody.children).map(row => [
-        row.children[0].textContent,
-        row.children[1].textContent,
-        row.children[2].textContent,
-        row.children[3].textContent,
-        row.children[5].textContent
-      ]);
-      ws_data.push(...rows);
-
-      const ws = XLSX.utils.aoa_to_sheet(ws_data);
-      XLSX.utils.book_append_sheet(wb, ws, "Absensi");
-      XLSX.writeFile(wb, `${judul.replace(/\s+/g, '_')}_${tanggalHariIni}.xlsx`);
-    }
-
-    async function exportPDF() {
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
-      const absenFilter = filterAbsen.value;
-      const judul = absenFilter === "pulang" ? "Absensi Pulang" :
-                    absenFilter === "masuk" ? "Absensi Masuk" : "Semua Data Absensi";
-      const tanggalHariIni = new Date().toISOString().split('T')[0];
-
-      doc.setFontSize(16);
-      doc.text(judul, 20, 20);
-      let y = 30;
-
-      for (let i = 0; i < tableBody.children.length; i++) {
-        const row = tableBody.children[i];
-        const nama = row.children[1].textContent;
-        const tanggal = row.children[2].textContent;
-        const lokasi = row.children[3].textContent;
-        const tipe = row.children[5].textContent;
-        const imgTag = row.children[4].querySelector("img");
-
-        doc.setFontSize(10);
-        doc.text(`${i + 1}. Nama: ${nama}`, 20, y);
-        doc.text(`Tanggal & Jam: ${tanggal}`, 20, y + 5);
-        doc.text(`Lokasi: ${lokasi}`, 20, y + 10);
-        doc.text(`Tipe Absen: ${tipe}`, 20, y + 15);
-
-        if (imgTag && imgTag.src && imgTag.src.startsWith("data:image")) {
-          const imgData = imgTag.src;
-          try {
-            doc.addImage(imgData, "JPEG", 140, y, 40, 40);
-          } catch (e) {
-            console.warn("Gagal menyisipkan gambar:", e);
-          }
-        }
-
-        y += 50;
-        if (y > 270) {
-          doc.addPage();
-          y = 20;
-        }
-      }
-
-      doc.save(`${judul.replace(/\s+/g, '_')}_${tanggalHariIni}.pdf`);
-    }
-
-    function logout() {
-      localStorage.removeItem('loggedIn');
-      window.location.href = 'login.html';
-    }
-
-    setTimeout(logout, 3600000); // auto logout setelah 1 jam
-  </script>
+  <!-- Tambahkan script.js kamu di sini -->
+  <script src="script.js"></script>
 </body>
 </html>
