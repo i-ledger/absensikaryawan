@@ -21,7 +21,12 @@
       border-radius: 12px;
       box-shadow: 0 0 15px rgba(0,0,0,0.1);
       text-align: center;
-      position: relative; /* Agar tombol logout dapat diposisikan relatif terhadap container */
+      position: relative;
+    }
+
+    .logo-img {
+      width: 80px;
+      margin-bottom: 10px;
     }
 
     h1 {
@@ -102,12 +107,10 @@
 </head>
 <body>
 
-
   <div class="container">
-    <!-- Tombol Logout di dalam container -->
     <button class="logout-btn" onclick="logout()">Logout</button>
     <div class="header">
-      <img src="pertamina-logoicon.png" alt="Logo Pertamina">
+      <img src="pertamina-logoicon.png" alt="Logo Pertamina" class="logo-img">
       <h1>Dashboard Admin</h1>
       <div class="btn-group">
         <button onclick="location.href='admin.html'">📋 Data Absensi</button>
