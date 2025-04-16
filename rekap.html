@@ -102,7 +102,8 @@
 </head>
 <body>
   <h2>Rekap Absensi Bulanan</h2>
-
+  <div class="kembali">
+    <button onclick="window.location.href='admin.html'">← Kembali ke Admin</button>  
   <div class="filter">
     <select id="bulan"></select>
     <select id="nama">
@@ -114,8 +115,7 @@
   <div class="export-buttons">
     <button onclick="exportToExcel()">Export ke Excel</button>
     <button onclick="exportToPDF()">Export ke PDF</button>
-  <div class="kembali">
-    <button onclick="window.location.href='admin.html'">← Kembali ke Admin</button>
+
   </div>
 
   <div id="rekapContainer">Loading...</div>
