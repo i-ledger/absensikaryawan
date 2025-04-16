@@ -202,4 +202,49 @@
       data.rekap.forEach(row => {
         html += `<tr><td>${row.nama}</td>`;
         data.tanggal.forEach(tgl => {
-          html += `<td>${row.masuk[tgl] || "-"}</td><td>${row.pulang[tgl
+          html += `<td>${row.masuk[tgl] || "-"}</td><td>${row.pulang[tgl] || "-"}</td>`;
+        });
+        html += "</tr>";
+      });
+      html += "</tbody></table>";
+      document.getElementById("rekapContainer").innerHTML = html;
+    }
+
+    function exportToExcel() {
+      if (!globalData) return alert("Data belum dimuat.");
+      const table = document.getElementById("rekapTable");
+      const wb = XLSX.utils.table_to_book(table, { sheet: "Rekap Absensi" });
+      XLSX.writeFile(wb, "Rekap_Absensi.xlsx");
+    }
+
+    async function exportToPDF() {
+      if (!globalData) return alert("Data belum dimuat.");
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ orientation: "landscape" });
+
+      const table = document.getElementById("rekapTable");
+      const rows = [...table.rows].map(row =>
+        [...row.cells].map(cell => cell.innerText)
+      );
+
+      let startY = 10;
+      let rowHeight = 8;
+
+      rows.forEach((row, i) => {
+        let startX = 10;
+        row.forEach((text, j) => {
+          doc.text(text, startX, startY);
+          startX += 40;
+        });
+        startY += rowHeight;
+      });
+
+      doc.save("Rekap_Absensi.pdf");
+    }
+
+    generateBulanOptions();
+    loadNamaKaryawan();
+    loadRekap();
+  </script>
+</body>
+</html>
