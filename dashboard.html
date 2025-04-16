@@ -1,1 +1,74 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard Admin</title>
+  <link rel="icon" type="image/png" href="pertamina-logo.jpg" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f2f5;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 50px auto;
+      padding: 30px;
+      background-color: #fff;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 30px;
+      color: #333;
+    }
+
+    .btn-group {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    button {
+      padding: 14px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .absen-btn {
+      margin-top: 30px;
+      background-color: #28a745;
+    }
+
+    .absen-btn:hover {
+      background-color: #218838;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Dashboard Admin</h1>
+    <div class="btn-group">
+      <button onclick="location.href='admin.html'">📋 Data Absensi</button>
+      <button onclick="location.href='datakaryawan.html'">👥 Data Karyawan</button>
+      <button onclick="location.href='rekap.html'">📊 Rekap Absensi</button>
+      <button class="absen-btn" onclick="location.href='index.html'">📝 Form Absen</button>
+    </div>
+  </div>
+</body>
+</html>
 
