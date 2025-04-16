@@ -334,18 +334,35 @@
       doc.text(judul, 20, 20);
       let y = 30;
 
-      Array.from(tableBody.children).forEach((row, i) => {
+      for (let i = 0; i < tableBody.children.length; i++) {
+        const row = tableBody.children[i];
+        const nama = row.children[1].textContent;
+        const tanggal = row.children[2].textContent;
+        const lokasi = row.children[3].textContent;
+        const tipe = row.children[5].textContent;
+        const imgTag = row.children[4].querySelector("img");
+
         doc.setFontSize(10);
-        doc.text(`${i + 1}. Nama: ${row.children[1].textContent}`, 20, y);
-        doc.text(`Tanggal & Jam: ${row.children[2].textContent}`, 20, y + 5);
-        doc.text(`Lokasi: ${row.children[3].textContent}`, 20, y + 10);
-        doc.text(`Tipe Absen: ${row.children[5].textContent}`, 20, y + 15);
-        y += 25;
+        doc.text(`${i + 1}. Nama: ${nama}`, 20, y);
+        doc.text(`Tanggal & Jam: ${tanggal}`, 20, y + 5);
+        doc.text(`Lokasi: ${lokasi}`, 20, y + 10);
+        doc.text(`Tipe Absen: ${tipe}`, 20, y + 15);
+
+        if (imgTag && imgTag.src && imgTag.src.startsWith("data:image")) {
+          const imgData = imgTag.src;
+          try {
+            doc.addImage(imgData, "JPEG", 140, y, 40, 40);
+          } catch (e) {
+            console.warn("Gagal menyisipkan gambar:", e);
+          }
+        }
+
+        y += 50;
         if (y > 270) {
           doc.addPage();
           y = 20;
         }
-      });
+      }
 
       doc.save(`${judul.replace(/\s+/g, '_')}_${tanggalHariIni}.pdf`);
     }
@@ -355,7 +372,7 @@
       window.location.href = 'login.html';
     }
 
-    setTimeout(logout, 3600000);
+    setTimeout(logout, 3600000); // auto logout setelah 1 jam
   </script>
 </body>
 </html>
